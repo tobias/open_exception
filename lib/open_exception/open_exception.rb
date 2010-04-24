@@ -1,7 +1,6 @@
 module OpenException
   
   class << self
-
     attr_writer :options
     
     def options
@@ -9,9 +8,8 @@ module OpenException
     end
 
     def open(exception, options = { })
-      ExceptionOpener.new(options).open(exception)
+      ExceptionOpener.new(exception, options).open
     end
-
   end
 
   class ExceptionOpener
