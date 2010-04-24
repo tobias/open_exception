@@ -6,7 +6,7 @@ begin
   Jeweler::Tasks.new do |gem|
     gem.name = "open_exception"
     gem.summary = %Q{Open an exception in your favorite editor}
-    gem.description = %Q{TODO: longer description of your gem}
+    gem.description = %Q{}
     gem.email = "tcrawley@gmail.com"
     gem.homepage = "http://github.com/tobias/open_exception"
     gem.authors = ["Tobias Crawley"]

@@ -5,8 +5,12 @@ class Raiser
     raise Exception.new
   end
 
-  def raise_in_call
+  def raise_first_level
     raise_now
+  end
+
+  def raise_second_level
+    raise_first_level
   end
 
   def file
