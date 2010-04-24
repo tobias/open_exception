@@ -16,4 +16,4 @@ module OpenException
   end
 end
 
-ActionController::Base.include OpenException::ActionControllerExtensions
+ActionController::Base.send(:include, OpenException::ActionControllerExtensions)
