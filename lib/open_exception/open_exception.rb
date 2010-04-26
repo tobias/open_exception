@@ -18,7 +18,7 @@ module OpenException
     end
 
     def configure
-      yield OpenStruct.new(options)
+      yield Configurator.new(options)
     end
 
     def open(exception, options = { })
@@ -104,5 +104,18 @@ module OpenException
       end
     end
   end
+  
+  class Configurator
+    def initialize(options)
+      @options = options
+    end
 
+    def method_missing(method, arg = nil)
+      if method.to_s =~ /(.*?)=/
+        @options[$1.to_sym] = arg
+      else
+        @options[method]
+      end
+    end
+  end
 end
