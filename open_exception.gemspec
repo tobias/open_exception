@@ -9,7 +9,7 @@ Gem::Specification.new do |s|
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Tobias Crawley"]
-  s.date = %q{2010-04-23}
+  s.date = %q{2010-04-25}
   s.description = %q{}
   s.email = %q{tcrawley@gmail.com}
   s.extra_rdoc_files = [
@@ -23,17 +23,14 @@ Gem::Specification.new do |s|
      "README.rdoc",
      "Rakefile",
      "VERSION",
-     "init.rb",
      "lib/open_exception.rb",
      "lib/open_exception/growl_support.rb",
      "lib/open_exception/open_exception.rb",
      "lib/open_exception/rails.rb",
      "open_exception.gemspec",
-     "rails/init.rb",
      "spec/open_exception_spec.rb",
      "spec/spec.opts",
-     "spec/spec_helper.rb",
-     "test_data/raiser.rb"
+     "spec/spec_helper.rb"
   ]
   s.homepage = %q{http://github.com/tobias/open_exception}
   s.rdoc_options = ["--charset=UTF-8"]

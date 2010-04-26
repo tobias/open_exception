@@ -18,5 +18,5 @@ end
 
 if !ActionController::Base.ancestors.include?(OpenException::ActionControllerExtensions)
   ActionController::Base.send(:include, OpenException::ActionControllerExtensions)
-  OpenException.options[:backtrace_line_filter] = %r{#{Rails.root}/(app|lib)}
+  OpenException.options[:backtrace_line_filters] << %r{#{Rails.root}/(app|lib)}
 end

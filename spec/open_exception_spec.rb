@@ -9,19 +9,19 @@ describe "OpenException" do
 
     it "should filter with a regex" do
       @opener = opener(stub_exception,
-                       :backtrace_line_filter => /other_file/)
+                       :backtrace_line_filters => [/other_file/])
       @opener.send(:extract_file_and_line).should == ["/some/other_file.rb", '22']
     end
 
     it "should filter with a lambda" do
       @opener = opener(stub_exception,
-                       :backtrace_line_filter => lambda { |line| line =~ /other_file/ })
+                       :backtrace_line_filters => [lambda { |line| line =~ /other_file/ }])
       @opener.send(:extract_file_and_line).should == ["/some/other_file.rb", '22']
     end
 
     it "should filter with an array of filters" do
       @opener = opener(stub_exception,
-                       :backtrace_line_filter => [/not gonna match/,
+                       :backtrace_line_filters => [/not gonna match/,
                                                   /other_file/])
       @opener.send(:extract_file_and_line).should == ["/some/other_file.rb", '22']
     end
@@ -50,19 +50,19 @@ describe "OpenException" do
       end
 
       it "should exclude based on exception class" do
-        @opener = opener(Exception.new, :exclusion_filter => Exception)
+        @opener = opener(Exception.new, :exclusion_filters => [Exception])
         @opener.should_not_receive(:extract_file_and_line)
         @opener.open
       end
 
       it "should exclude based on a lambda" do
-        @opener = opener(Exception.new, :exclusion_filter => lambda { |ex| true })
+        @opener = opener(Exception.new, :exclusion_filters => [lambda { |ex| true }])
         @opener.should_not_receive(:extract_file_and_line)
         @opener.open
       end
 
       it "should exclude based on an array of filters" do
-        @opener = opener(Exception.new, :exclusion_filter => [StandardError, Exception])
+        @opener = opener(Exception.new, :exclusion_filters => [StandardError, Exception])
         @opener.should_not_receive(:extract_file_and_line)
         @opener.open
       end

@@ -1,10 +1,24 @@
 module OpenException
+
+  EDITOR_COMMANDS = {
+    :emacs => '/usr/bin/emacsclient -n +{line} {file}',
+    :textmate => '/usr/local/bin/mate -a -d -l {line} {file}',
+    :macvim => '/usr/local/bin/mvim +{line} {file}'
+  }
   
+  DEFAULT_OPTIONS = {
+    :open_with => :emacs,
+    :exclusion_filters => [], #[ExceptionClass, lambda] # any can return/be true to exclude
+    :backtrace_line_filters => [] #[/regex/, lambda] # the first backtrace line that returns true is used
+  }
+
   class << self
-    attr_writer :options
-    
     def options
-      @options ||= { }
+      @options ||= DEFAULT_OPTIONS.clone
+    end
+
+    def configure
+      yield OpenStruct.new(options)
     end
 
     def open(exception, options = { })
@@ -13,22 +27,12 @@ module OpenException
   end
 
   class ExceptionOpener
-    DEFAULT_OPTIONS = {
-      :open_with => :emacs,
-      :emacs_command => '/usr/bin/emacsclient -n +{line} {file}',
-      :textmate_command => '/usr/local/bin/mate -a -d -l {line} {file}',
-      :macvim_command => '/usr/local/bin/mvim +{line} {file}'
-      # :exclusion_filter => [ExceptionClass, lambda] # any can return/be
-      # true to exclude
-      # :backtrace_line_filter => [/regex/, lambda] # the first backtrace
-      # line that returns true is used
-    }
 
     attr_accessor :options
 
     def initialize(exception, options = {})
       @exception = exception
-      @options = DEFAULT_OPTIONS.merge(OpenException.options).merge(options)
+      @options = OpenException.options.merge(options)
     end
 
     def open
@@ -37,21 +41,21 @@ module OpenException
         open_file(*file_and_line) if file_and_line
       end
     end
-    
+
     protected
     attr_reader :exception
-    
+
     def extract_file_and_line
       if exception.backtrace and
-        filter_backtrace(exception.backtrace) =~ /(.*?):(\d*)/
+          filter_backtrace(exception.backtrace) =~ /(.*?):(\d*)/
         [$1, $2]
       end
     end
 
     def filter_backtrace(backtrace)
-      if options[:backtrace_line_filter]
+      if !options[:backtrace_line_filters].empty?
         backtrace.find do |line|
-          apply_backtrace_filter(options[:backtrace_line_filter], line)
+          apply_backtrace_filter(options[:backtrace_line_filters], line)
         end
       else
         backtrace.first
@@ -67,10 +71,10 @@ module OpenException
         line =~ filter
       end
     end
-    
+
     def exclude_exception?
-      if options[:exclusion_filter]
-        apply_exclusion_filter(options[:exclusion_filter])
+      if !options[:exclusion_filters].empty?
+        apply_exclusion_filter(options[:exclusion_filters])
       end
     end
 
@@ -83,7 +87,7 @@ module OpenException
         exception.is_a?(filter)
       end
     end
-    
+
     def open_file(file_name, line_number)
       if File.readable?(file_name)
         cmd = open_command.gsub('{file}', file_name).gsub('{line}', line_number)
@@ -94,7 +98,7 @@ module OpenException
 
     def open_command
       if options[:open_with].is_a?(Symbol)
-        options[:"#{options[:open_with]}_command"]
+        EDITOR_COMMANDS[options[:open_with]]  
       else
         options[:open_with]
       end
