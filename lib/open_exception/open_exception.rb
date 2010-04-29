@@ -24,6 +24,10 @@ module OpenException
     def open(exception, options = { })
       ExceptionOpener.new(exception, options).open
     end
+
+    def puts(msg)
+      defined?(Rails) ? Rails.logger.info(msg) : super
+    end
   end
 
   class ExceptionOpener
