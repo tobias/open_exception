@@ -9,9 +9,6 @@ You can add filters that allow you to ignore some exceptions, and filters that a
 to scope the backtrace search. The backtrace scoping is useful for opening the last call
 in your application code when the exception occurs in a framework or lib.
 
-If you are on MacOSX and have the [growl gem](http://rubygems.org/gems/growl) installed,
-you will get a growl notification with the exception message when the file is opened.
-
 Editors
 -------
 
@@ -89,6 +86,15 @@ You can override the default (or configured) options by passing a hash as the se
 
     OpenException.open(exception, {:open_with => :textmate, :backtrace_line_filters => [filter, another_filter])
 
+Growl Support
+-------------
+
+If you are on MacOSX and have the [growl gem](http://rubygems.org/gems/growl) installed,
+you will get a growl notification with the exception message when the file is opened.
+
+Note that growlnotify currently has to be in the path for this to work until the growl gem 
+is fixed to look in the default location and/or allow overriding the binary location.
+
 Note on Patches/Pull Requests
 -----------------------------
  
@@ -98,6 +104,5 @@ Note on Patches/Pull Requests
 * Commit, do not mess with rakefile, version, or history. (if you want to have your own version, that is fine but bump version in a commit by itself I can ignore when I pull)
 * Send me a pull request. Bonus points for topic branches.
 
-== Copyright
 
 Copyright (c) 2010 Tobias Crawley. See LICENSE for details.
