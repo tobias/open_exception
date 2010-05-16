@@ -84,10 +84,10 @@ describe "OpenException" do
         @opener.send(:open_file)
       end
 
-      it "should write out the stack to a file if the open_command contains {stackfile}" do
+      it "should write out the trace to a file if the open_command contains {tracefile}" do
         File.stub!(:readable?).and_return(true)
         @opener = opener(stub_exception)
-        @opener.stub!(:open_command).and_return('{stackfile}')
+        @opener.stub!(:open_command).and_return('{tracefile}')
         Tempfile.should_receive(:open)
         @opener.file_name = '/a/file'
         @opener.line_number = '2'

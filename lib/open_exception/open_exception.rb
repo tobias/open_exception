@@ -4,7 +4,7 @@ module OpenException
 
   EDITOR_COMMANDS = {
     :emacs => '/usr/bin/emacsclient -n +{line} {file}',
-    :emacs_with_stack => '/usr/bin/emacsclient -e \'(open-stack-and-file "{stackfile}" "{file}" {line})\'',
+    :emacs_with_trace => '/usr/bin/emacsclient -e \'(open-trace-and-file "{tracefile}" "{file}" {line})\'',
     :textmate => '/usr/local/bin/mate -a -d -l {line} {file}',
     :macvim => '/usr/local/bin/mvim +{line} {file}'
   }
@@ -96,12 +96,12 @@ module OpenException
     def open_file
       if File.readable?(file_name)
         cmd = open_command.gsub('{file}', file_name).gsub('{line}', line_number)
-        if cmd =~ /\{stackfile\}/
-          Tempfile.open('open_exception-stack') do |f|
+        if cmd =~ /\{tracefile\}/
+          Tempfile.open('open_exception-trace') do |f|
             f << exception.message
             f << "\n"
             f << exception.backtrace.join("\n")
-            cmd.gsub!('{stackfile}', f.path)
+            cmd.gsub!('{tracefile}', f.path)
           end
         end
         system(cmd)
