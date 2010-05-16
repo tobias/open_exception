@@ -8,24 +8,22 @@ module OpenException
     end
     
     protected
-    def open_file_with_growl(file, line)
-      puts 'growl open file'
-      growl_notify(file, line) if File.readable?(file)
-      open_file_without_growl(file, line)
+    def open_file_with_growl
+      growl_notify if File.readable?(file_name)
+      open_file_without_growl
     end
     
-    def growl_notify(file, line)
+    def growl_notify
       if Growl.installed?
         Growl.notify do |n|
           n.title = 'Open Exception'
-          n.message = growl_message(file, line)
+          n.message = growl_message
         end
       end
     end
     
-    def growl_message(file, line)
-      msg = "Exception: #{exception.message} at #{exception.backtrace.first}\nOpening #{file}:#{line}"
-      msg << " in #{options[:open_with]}" if options[:open_with].is_a?(Symbol)
+    def growl_message
+      msg = "Exception: #{exception.message} at #{exception.backtrace.first}\nOpening #{file_name}:#{line_number}"
     end
   end
 end

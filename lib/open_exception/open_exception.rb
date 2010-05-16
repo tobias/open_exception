@@ -1,7 +1,10 @@
+require 'tempfile'
+
 module OpenException
 
   EDITOR_COMMANDS = {
     :emacs => '/usr/bin/emacsclient -n +{line} {file}',
+    :emacs_with_stack => '/usr/bin/emacsclient -e \'(open-stack-and-file "{stackfile}" "{file}" {line})\'',
     :textmate => '/usr/local/bin/mate -a -d -l {line} {file}',
     :macvim => '/usr/local/bin/mvim +{line} {file}'
   }
@@ -40,19 +43,17 @@ module OpenException
     end
 
     def open
-      if !exclude_exception?
-        file_and_line = extract_file_and_line
-        open_file(*file_and_line) if file_and_line
-      end
+      extract_file_and_line && open_file unless exclude_exception?
     end
 
     protected
-    attr_reader :exception
+    attr_reader :exception, :file_name, :line_number
 
     def extract_file_and_line
       if exception.backtrace and
           filter_backtrace(exception.backtrace) =~ /(.*?):(\d*)/
-        [$1, $2]
+        @file_name = $1
+        @line_number = $2
       end
     end
 
@@ -92,10 +93,17 @@ module OpenException
       end
     end
 
-    def open_file(file_name, line_number)
+    def open_file
       if File.readable?(file_name)
         cmd = open_command.gsub('{file}', file_name).gsub('{line}', line_number)
-        puts cmd
+        if cmd =~ /\{stackfile\}/
+          Tempfile.open('open_exception-stack') do |f|
+            f << exception.message
+            f << "\n"
+            f << exception.backtrace.join("\n")
+            cmd.gsub!('{stackfile}', f.path)
+          end
+        end
         system(cmd)
       end
     end

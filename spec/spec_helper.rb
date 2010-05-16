@@ -12,6 +12,7 @@ end
 
 def stub_exception
   ex = mock('exception')
+  ex.stub!(:message).and_return("The message")
   ex.stub!(:backtrace).and_return([
                                    "/some/file.rb:1:in 'level_one'",
                                    "/some/other_file.rb:22:in 'level_two'",
