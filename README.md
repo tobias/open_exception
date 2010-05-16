@@ -25,12 +25,14 @@ If you are using emacs, you can also open the backtrace along with the file usin
 as the open command. To use this, you will need to add the following function to your emacs init:
 
     (defun open-trace-and-file (tracefile file linenum)
-      "Open visit TRACEFILE in one window (in compilation mode), and visit FILE at LINENUM in another"
+      "Visits TRACEFILE in one window (in compilation mode), and visit FILE at LINENUM in another"
       (find-file-other-window tracefile)
       (goto-line 2)
       (compilation-mode)
       (find-file-other-window file)
       (goto-line linenum))
+
+This will open the backtrace in a compilation buffer, making it easy to navigate to other files in the trace. 
 
 Note: for `emacsclient` to work, you will need to be running `emacsserver`. To start the server:
     M-x server-start
