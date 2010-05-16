@@ -18,7 +18,21 @@ Out if the box, the gem supports three editors (with the following open commands
     :textmate => '/usr/local/bin/mate -a -d -l {line} {file}',
     :macvim => '/usr/local/bin/mvim +{line} {file}'
 
-Note: if using emacs, you will need to be running `emacsserver`. To start the server:
+Any of these will open the file and set focus on the editor. `:emacs` is the default.
+
+If you are using emacs, you can also open the backtrace along with the file using `:emacs_with_trace` as the `:open_with` argument. This uses: 
+    /usr/bin/emacsclient -e '(open-trace-and-file "{tracefile}" "{file}" {line})'
+as the open command. To use this, you will need to add the following function to your emacs init:
+
+    (defun open-trace-and-file (tracefile file linenum)
+      "Open visit TRACEFILE in one window (in compilation mode), and visit FILE at LINENUM in another"
+      (find-file-other-window tracefile)
+      (goto-line 2)
+      (compilation-mode)
+      (find-file-other-window file)
+      (goto-line linenum))
+
+Note: for `emacsclient` to work, you will need to be running `emacsserver`. To start the server:
     M-x server-start
 or add the following to your init:
     (server-start)
@@ -29,9 +43,9 @@ Configuration
 To configure, pass a block to the configure method:
     
     OpenException.configure do |oe|
-      # open_with can be one of the built in editors (:emacs, :macvim, :textmate)
-      # or a command to execute to open the file, where {file} and {line} will be replaced
-      # with the file path and line number, respectively. See 'Editors' above for an example.
+      # open_with can be one of the built in editors (:emacs, :emacs_with_trace, :macvim, :textmate)
+      # or a command to execute to open the file, where {file}, {line}, and {tracefile} will be replaced
+      # with the file path, line number, and path to tmp file holding the backtrace, respectively. See 'Editors' above for an example.
       # The default editor is :emacs.
 
       oe.open_with = :emacs
