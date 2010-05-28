@@ -32,7 +32,9 @@ as the open command. To use this, you will need to add the following function to
       (find-file-other-window file)
       (goto-line linenum))
 
-This will open the backtrace in a compilation buffer, making it easy to navigate to other files in the trace. 
+This will open the backtrace in a compilation buffer, making it easy to navigate to other files in the trace.
+
+If using `(open-trace-and-file)`, emacs will *not* take focus - you will need to switch to it manually. 
 
 Note: for `emacsclient` to work, you will need to be running `emacsserver`. To start the server:
     M-x server-start
