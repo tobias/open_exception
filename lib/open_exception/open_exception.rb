@@ -38,7 +38,7 @@ module OpenException
     attr_accessor :options
 
     def initialize(exception, options = {})
-      @exception = exception
+      @exception = exception.respond_to?(:original_exception) ? exception.original_exception || exception : exception
       @options = OpenException.options.merge(options)
     end
 
@@ -48,13 +48,22 @@ module OpenException
 
     protected
     attr_reader :exception, :file_name, :line_number
+    
+    def puts(msg)
+      OpenException.puts(msg)
+    end
 
+    def backtrace
+      exception.backtrace
+    end
+    
     def extract_file_and_line
-      if exception.backtrace and
-          filter_backtrace(exception.backtrace) =~ /(.*?):(\d*)/
+      if backtrace and
+          filter_backtrace(backtrace) =~ /(.*?):(\d*)/
         @file_name = $1
         @line_number = $2
       end
+
     end
 
     def filter_backtrace(backtrace)
@@ -100,7 +109,7 @@ module OpenException
           Tempfile.open('open_exception-trace') do |f|
             f << exception.message
             f << "\n"
-            f << exception.backtrace.join("\n")
+            f << backtrace.join("\n")
             cmd.gsub!('{tracefile}', f.path)
           end
         end

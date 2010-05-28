@@ -13,10 +13,11 @@ module OpenException
       OpenException.open(exception)
       rescue_action_locally_without_open_exception(exception)
     end
+    
   end
 end
 
 if !ActionController::Base.ancestors.include?(OpenException::ActionControllerExtensions)
   ActionController::Base.send(:include, OpenException::ActionControllerExtensions)
-  OpenException.options[:backtrace_line_filters] << %r{#{Rails.root}/(app|lib)}
+  OpenException.options[:backtrace_line_filters] << %r{^#{RAILS_ROOT}/(app|lib)}
 end

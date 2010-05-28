@@ -1,7 +1,7 @@
 require File.dirname(__FILE__) + "/open_exception/open_exception"
 require File.dirname(__FILE__) + "/open_exception/rails" if defined?(ActionController)
 
-init_message = "** open_extension initialized "
+init_message = "** open_exception initialized "
 
 begin
   require 'growl'
